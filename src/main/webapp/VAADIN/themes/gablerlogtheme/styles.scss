@@ -1,0 +1,11 @@
+@import "gablerlogtheme.scss";
+@import "addons.scss";
+
+// This file prefixes all rules with the theme name to avoid causing conflicts with other themes.
+// The actual styles should be defined in gablerlogtheme.scss
+
+.gablerlogtheme {
+  @include addons;
+  @include gablerlogtheme;
+
+}
