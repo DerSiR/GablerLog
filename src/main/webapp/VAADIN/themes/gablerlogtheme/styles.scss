@@ -5,7 +5,7 @@
 // The actual styles should be defined in gablerlogtheme.scss
 
 .gablerlogtheme {
-  @include addons;
-  @include gablerlogtheme;
+	@include addons;
+	@include gablerlogtheme;
 
 }
