@@ -11,7 +11,7 @@ tmp/
 *.swp
 *~.nib
 local.properties
-#.settings/
+.settings/
 .loadpath
 .recommenders
 
@@ -75,3 +75,13 @@ buildNumber.properties
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
+
+
+
+############
+#  Custom  #
+############
+
+!.settings/org.eclipse.jdt.core.prefs
+!.settings/org.eclipse.wst.common.component
+!.settings/org.eclipse.wst.common.project.facet.core.xml
