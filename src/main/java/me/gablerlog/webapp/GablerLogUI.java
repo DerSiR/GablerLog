@@ -26,6 +26,7 @@ public class GablerLogUI extends UI {
 	protected void init(VaadinRequest vaadinRequest) {
 		final ApplicationDisplay display = new ApplicationDisplay();
 		final Navigator navigator = new Navigator(this, display);
+		setContent(display);
 		
 		AllocationView viewAllocation = new AllocationView();
 		navigator.addView("", viewAllocation);
