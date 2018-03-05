@@ -2,6 +2,7 @@ package me.gablerlog.webapp;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
 
@@ -25,13 +26,16 @@ public class GablerLogUI extends UI {
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 		final ApplicationDisplay display = new ApplicationDisplay();
-		final Navigator navigator = new Navigator(this, display);
+		final Navigator navigator = new Navigator(this, display.getViewDisplay());
 		setContent(display);
 		
-		AllocationView viewAllocation = new AllocationView();
-		navigator.addView("", viewAllocation);
-		navigator.addView(AllocationView.VIEW_NAME, viewAllocation);
+		navigator.addView(AllocationView.VIEW_NAME, AllocationView.class);
 		navigator.addView(TrackingView.VIEW_NAME, TrackingView.class);
 		navigator.addView(NavigationView.VIEW_NAME, NavigationView.class);
+		
+		String f = Page.getCurrent().getUriFragment();
+		if (f == null || f.isEmpty()) {
+			navigator.navigateTo(AllocationView.VIEW_NAME);
+		}
 	}
 }
