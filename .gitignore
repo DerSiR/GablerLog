@@ -85,3 +85,6 @@ buildNumber.properties
 !.settings/org.eclipse.jdt.core.prefs
 !.settings/org.eclipse.wst.common.component
 !.settings/org.eclipse.wst.common.project.facet.core.xml
+
+# Database configuration + Firebase private keys
+src/main/resources/me/gablerlog/webapp/db
