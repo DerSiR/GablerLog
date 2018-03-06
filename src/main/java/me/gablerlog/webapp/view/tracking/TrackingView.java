@@ -15,43 +15,36 @@ import me.gablerlog.webapp.component.Card;
 @SuppressWarnings("serial")
 public class TrackingView extends VerticalLayout implements View {
 	public static final String VIEW_NAME = "tracking";
-
+	
 	private Card cTrackingNumber;
 	private Card cMap;
 	
 	private TextField tfTrackingNumber;
-	private Button btnTrack;
+	private Button	  btnTrack;
 	
-	private VerticalLayout vLayout;
+	private VerticalLayout	 vLayout;
 	private HorizontalLayout hLayout;
-	private Label lblTrackingNumber;
-	private Label lblLocation;
+	private Label			 lblTrackingNumber;
+	private Label			 lblLocation;
 	
 	private Image imgMap;
-
 	
-
-	private static final Image imgTransmitted = 
-			new Image(null,	new ThemeResource("res/img/gl_delivery_note_secondary.png"));
-	private static final Image imgPending = 
-			new Image(null, new ThemeResource("res/img/gl_box_into_secondary.png"));
-	private static final Image imgOnRoad = 
-			new Image(null, new ThemeResource("res/img/gl_truck2_secondary.png"));
-	private static final Image imgDelivered = 
-			new Image(null, new ThemeResource("res/img/gl_box_out_secondary.png"));
-
+	private static final Image imgTransmitted = new Image(null, new ThemeResource("res/img/gl_delivery_note_secondary.png"));
+	private static final Image imgPending	  = new Image(null, new ThemeResource("res/img/gl_box_into_secondary.png"));
+	private static final Image imgOnRoad	  = new Image(null, new ThemeResource("res/img/gl_truck2_secondary.png"));
+	private static final Image imgDelivered	  = new Image(null, new ThemeResource("res/img/gl_box_out_secondary.png"));
+	
 	public TrackingView() {
-
+		
 		tfTrackingNumber = new TextField();
 		tfTrackingNumber.setPlaceholder("Tracking Number");
-
+		
 		btnTrack = new Button("Track");
-
+		
 		cTrackingNumber = new Card();
 		cTrackingNumber.setHeaderContent(tfTrackingNumber);
 		cTrackingNumber.addAction(btnTrack);
 		addComponent(cTrackingNumber);
-		
 		
 		lblTrackingNumber = new Label("GL-XXX");
 		lblLocation = new Label("Mannheim - Nürnberg");
@@ -61,23 +54,26 @@ public class TrackingView extends VerticalLayout implements View {
 		vLayout = new VerticalLayout();
 		vLayout.setMargin(false);
 		vLayout.setSpacing(false);
-		vLayout.addComponents(lblTrackingNumber,lblLocation);
+		vLayout.addComponents(lblTrackingNumber, lblLocation);
 		
 		hLayout = new HorizontalLayout();
-		hLayout.addComponents(resizeImage(imgOnRoad),vLayout);
+		hLayout.addComponents(resizeImage(imgOnRoad), vLayout);
 		
 		cMap = new Card();
 		cMap.setHeaderContent(hLayout);
 		cMap.setBodyContent(imgMap);
 		addComponent(cMap);
 		
-
+		btnTrack.addClickListener(e -> {
+			lblTrackingNumber.setValue(tfTrackingNumber.getValue());
+		});
 	}
+	
 	private Image resizeImage(Image img) {
 		img.setHeight(64, Unit.PIXELS);
 		img.setWidth(64, Unit.PIXELS);
 		return img;
 		
 	}
-
+	
 }
