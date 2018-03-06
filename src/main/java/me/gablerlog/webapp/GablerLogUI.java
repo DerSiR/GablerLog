@@ -1,11 +1,14 @@
 package me.gablerlog.webapp;
 
+import java.io.IOException;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
 
+import me.gablerlog.webapp.db.Firebase;
 import me.gablerlog.webapp.view.PlaceholderView;
 import me.gablerlog.webapp.view.allocation.AllocationController;
 import me.gablerlog.webapp.view.allocation.AllocationView;
@@ -27,6 +30,12 @@ public class GablerLogUI extends UI {
 	
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
+		try {
+			Firebase.open("gabler-log");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		final ApplicationDisplay display = new ApplicationDisplay();
 		final Navigator navigator = new Navigator(this, display.getViewDisplay());
 		setContent(display);
