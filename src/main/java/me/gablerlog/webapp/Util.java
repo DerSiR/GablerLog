@@ -2,6 +2,8 @@ package me.gablerlog.webapp;
 
 import java.text.SimpleDateFormat;
 
+import me.gablerlog.webapp.db.entity.Location;
+
 public class Util {
 	
 	public static final SimpleDateFormat GENERAL_DATETIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -142,5 +144,25 @@ public class Util {
 		}
 		
 		return base34.toUpperCase();
+	}
+	
+	public static double calcAirDistance(Location loc1, Location loc2) {
+		return calcAirDistance(loc1.getLatitude(), loc1.getLongitude(), loc2.getLatitude(), loc2.getLongitude());
+	}
+	
+	public static double calcAirDistance(double lat1, double lon1, double lat2, double lon2) {
+		final double R = 6371; // Radius of the earth in km
+		double dLat = deg2rad(lat2 - lat1);
+		double dLon = deg2rad(lon2 - lon1);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+				Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+						Math.sin(dLon / 2) * Math.sin(dLon / 2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		double d = R * c; // Distance in km
+		return d;
+	}
+	
+	public static double deg2rad(double deg) {
+		return deg * (Math.PI / 180);
 	}
 }

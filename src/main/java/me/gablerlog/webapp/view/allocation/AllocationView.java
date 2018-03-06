@@ -10,6 +10,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -23,7 +25,9 @@ import me.gablerlog.webapp.db.FirebaseDataProvider;
 import me.gablerlog.webapp.db.RealtimeDatabase;
 import me.gablerlog.webapp.db.entity.Category;
 import me.gablerlog.webapp.db.entity.Order;
+import me.gablerlog.webapp.db.entity.Route;
 import me.gablerlog.webapp.db.entity.Transporter;
+import me.gablerlog.webapp.planner.RoutePlanner;
 
 @SuppressWarnings("serial")
 public class AllocationView extends CssLayout implements View {
@@ -101,12 +105,6 @@ public class AllocationView extends CssLayout implements View {
 	}
 	
 	private void handleDataEvents() {
-		btnSubmit.addClickListener(e -> {
-			wdParameters.setModal(true);
-			UI.getCurrent().addWindow(wdParameters);
-			wdParameters.center();
-		});
-		
 		tabCategory.cbCargoType.addSelectionListener(e -> {
 			if (!e.isUserOriginated()) return;
 			
@@ -133,6 +131,31 @@ public class AllocationView extends CssLayout implements View {
 			
 			tabTransporter.gdTransporter.setDataProvider(transporterDataProvider);
 			tabOrder.gdOrder.setDataProvider(vacantOrdersDataProvider);
+		});
+		
+		btnSubmit.addClickListener(e -> {
+			wdParameters.setModal(true);
+			UI.getCurrent().addWindow(wdParameters);
+			wdParameters.center();
+		});
+		
+		btnCancel.addClickListener(e -> wdParameters.close());
+		
+		btnPlanRoute.addClickListener(e -> {
+			String cargoType = tabCategory.cbCargoType.getSelectedItem().orElse(null);
+			Category category = tabCategory.gdCategory.getSelectedItems().stream().findFirst().orElse(null);
+			Transporter transporter = tabTransporter.gdTransporter.getSelectedItems().stream().findFirst().orElse(null);
+			Set<Order> orders = tabOrder.gdOrder.getSelectedItems();
+			
+			RoutePlanner planner = new RoutePlanner(cargoType, category, transporter, orders);
+			planner.setAdjustRoute(ckbAdjustRoute.getValue());
+			planner.setDistributeOrders(ckbDistributeOrders.getValue());
+			
+			Route route = planner.planRoute();
+			route.setKey(transporter.getKey());
+			db.setValue("routes", route);
+			
+			Notification.show("Route planned", Type.TRAY_NOTIFICATION);
 		});
 	}
 	
