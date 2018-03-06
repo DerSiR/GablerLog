@@ -1,5 +1,6 @@
 package me.gablerlog.webapp.db;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
@@ -239,6 +240,64 @@ public class RealtimeDatabase {
 			@Override
 			public void onDataChange(DataSnapshot snapshot) {
 				callback.accept(snapshot.getValue(type));
+			}
+			
+			@Override
+			public void onCancelled(DatabaseError error) {
+				errorHandler.accept(error);
+			}
+		});
+	}
+	
+	public <T> Map<String, T> getValues(String ref, Class<T> type) {
+		return getValues(getReference(ref), type);
+	}
+	
+	public <T> void getValuesAsync(String ref, Class<T> type, Consumer<Map<String, T>> callback) {
+		getValuesAsync(getReference(ref), type, callback);
+	}
+	
+	public <T> void getValuesAsync(String ref, Class<T> type, Consumer<Map<String, T>> callback, Consumer<DatabaseError> errorHandler) {
+		getValuesAsync(getReference(ref), type, callback, errorHandler);
+	}
+	
+	public <T> Map<String, T> getValues(Query ref, Class<T> type) {
+		try {
+			Semaphore sem = new Semaphore(1);
+			sem.acquire();
+			
+			Vector<Map<String, T>> refObj = new Vector<>();
+			getValuesAsync(ref, type, e -> {
+				refObj.add(e);
+				sem.release();
+			});
+			
+			sem.acquire();
+			
+			return refObj.get(0);
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public <T> void getValuesAsync(Query ref, Class<T> type, Consumer<Map<String, T>> callback) {
+		getValuesAsync(ref, type, callback, err -> {
+			throw new RuntimeException(err.toException());
+		});
+	}
+	
+	public <T> void getValuesAsync(Query ref, Class<T> type, Consumer<Map<String, T>> callback, Consumer<DatabaseError> errorHandler) {
+		ref.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot snapshot) {
+				Map<String, T> entries = new HashMap<>();
+				snapshot.getChildren().forEach(e -> {
+					T entry = e.getValue(type);
+					entries.put(e.getKey(), entry);
+				});
+				callback.accept(entries);
 			}
 			
 			@Override

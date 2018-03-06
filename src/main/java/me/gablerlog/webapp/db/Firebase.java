@@ -49,6 +49,10 @@ public class Firebase {
 		return firebase;
 	}
 	
+	public static Firebase get(String serviceAccountName) {
+		return connections.get(serviceAccountName);
+	}
+	
 	public RealtimeDatabase getRealtimeDatabase() {
 		return database;
 	}

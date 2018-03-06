@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.DataProviderListener;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.server.SerializablePredicate;
 import com.vaadin.shared.Registration;
@@ -124,5 +125,73 @@ public class FirebaseDataProvider<T extends HasKey>
 	
 	@Override
 	public void onCancelled(DatabaseError error) {
+	}
+	
+	public FirebaseListDataProvider<T> forLists() {
+		return new FirebaseListDataProvider<>(this);
+	}
+	
+	public static class FirebaseListDataProvider<T extends HasKey>
+			extends ListDataProvider<T>
+			implements ChildEventListener {
+		
+		private FirebaseDataProvider<T> dataProvider;
+		
+		public FirebaseListDataProvider(FirebaseDataProvider<T> dataProvider) {
+			super(dataProvider.data.values());
+			
+			this.dataProvider = dataProvider;
+		}
+		
+		@Override
+		public String getId(T item) {
+			return dataProvider.getId(item);
+		}
+		
+		@Override
+		public Stream<T> fetch(Query<T, SerializablePredicate<T>> query) {
+			return dataProvider.data.values().stream();
+		}
+		
+		@Override
+		public int size(Query<T, SerializablePredicate<T>> query) {
+			return dataProvider.data.size();
+		}
+		
+		@Override
+		public boolean isInMemory() {
+			return dataProvider.isInMemory();
+		}
+		
+		@Override
+		public Registration addDataProviderListener(DataProviderListener<T> listener) {
+			return dataProvider.addDataProviderListener(listener);
+		}
+		
+		@Override
+		public void onChildAdded(DataSnapshot snapshot, String previousChildName) {
+			dataProvider.onChildAdded(snapshot, previousChildName);
+			refreshAll();
+		}
+		
+		@Override
+		public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
+			dataProvider.onChildChanged(snapshot, previousChildName);
+			refreshItem(snapshot.getValue(dataProvider.type));
+		}
+		
+		@Override
+		public void onChildRemoved(DataSnapshot snapshot) {
+			dataProvider.onChildRemoved(snapshot);
+			refreshAll();
+		}
+		
+		@Override
+		public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
+		}
+		
+		@Override
+		public void onCancelled(DatabaseError error) {
+		}
 	}
 }
