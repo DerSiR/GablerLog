@@ -1,7 +1,10 @@
 package me.gablerlog.webapp.db;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.firebase.database.ChildEventListener;
@@ -31,9 +34,22 @@ public class FirebaseDataProvider<T extends HasKey>
 		implements ChildEventListener {
 	
 	private LinkedHashMap<String, T> data				 = new LinkedHashMap<>();
-	private DatabaseReference		 databaseReference;
+	private final DatabaseReference	 rootReference;
+	private FirebaseLocation[]		 locations;
+	private Predicate<T>			 localFilter;
 	private Class<T>				 type;
 	private AtomicInteger			 registeredListeners = new AtomicInteger(0);
+	
+	private static class FirebaseLocation {
+		
+		private final DatabaseReference			   databaseReference;
+		private com.google.firebase.database.Query filteredReference;
+		
+		public FirebaseLocation(DatabaseReference reference) {
+			databaseReference = reference;
+			filteredReference = reference;
+		}
+	}
 	
 	/**
 	 * Constructs a new Firebase data provider connected to the
@@ -46,7 +62,19 @@ public class FirebaseDataProvider<T extends HasKey>
 	 *            include
 	 */
 	public FirebaseDataProvider(Class<T> type, DatabaseReference databaseReference) {
-		this.databaseReference = databaseReference;
+		rootReference = databaseReference;
+		locations = new FirebaseLocation[] { new FirebaseLocation(databaseReference) };
+		this.type = type;
+	}
+	
+	public FirebaseDataProvider(Class<T> type, DatabaseReference databaseReference, Collection<String> children) {
+		rootReference = databaseReference;
+		locations = new FirebaseLocation[children.size()];
+		int index = 0;
+		for (String child : children) {
+			locations[index] = new FirebaseLocation(databaseReference.child(child));
+			index++;
+		}
 		this.type = type;
 	}
 	
@@ -57,12 +85,22 @@ public class FirebaseDataProvider<T extends HasKey>
 	
 	@Override
 	public Stream<T> fetch(Query<T, SerializablePredicate<T>> query) {
-		return data.values().stream();
+		if (localFilter != null) {
+			return data.values().stream().filter(localFilter);
+		} else {
+			return data.values().stream();
+		}
 	}
 	
 	@Override
 	public int size(Query<T, SerializablePredicate<T>> query) {
-		return data.size();
+		if (localFilter != null) {
+			return (int) data.values().stream()
+					.filter(localFilter)
+					.count();
+		} else {
+			return data.size();
+		}
 	}
 	
 	@Override
@@ -86,11 +124,15 @@ public class FirebaseDataProvider<T extends HasKey>
 	}
 	
 	private void registerFirebaseListener() {
-		databaseReference.addChildEventListener(this);
+		for (FirebaseLocation loc : locations) {
+			loc.filteredReference.addChildEventListener(this);
+		}
 	}
 	
 	private void unregisterFirebaseListener() {
-		databaseReference.removeEventListener(this);
+		for (FirebaseLocation loc : locations) {
+			loc.filteredReference.removeEventListener(this);
+		}
 	}
 	
 	@Override
@@ -125,6 +167,36 @@ public class FirebaseDataProvider<T extends HasKey>
 	
 	@Override
 	public void onCancelled(DatabaseError error) {
+	}
+	
+	public void filter(Function<DatabaseReference, com.google.firebase.database.Query> filter) {
+		removeFilter();
+		for (FirebaseLocation loc : locations) {
+			loc.filteredReference = filter.apply(loc.databaseReference);
+		}
+		refreshAll();
+	}
+	
+	public void removeFilter() {
+		unregisterFirebaseListener();
+		for (FirebaseLocation loc : locations) {
+			loc.filteredReference = loc.databaseReference;
+		}
+		refreshAll();
+	}
+	
+	public void filterLocal(Predicate<T> filter) {
+		localFilter = filter;
+		refreshAll();
+	}
+	
+	public void removeLocalFilter() {
+		localFilter = null;
+		refreshAll();
+	}
+	
+	public DatabaseReference getReference() {
+		return rootReference;
 	}
 	
 	public FirebaseListDataProvider<T> forLists() {
@@ -192,6 +264,30 @@ public class FirebaseDataProvider<T extends HasKey>
 		
 		@Override
 		public void onCancelled(DatabaseError error) {
+		}
+		
+		public void filter(Function<DatabaseReference, com.google.firebase.database.Query> filter) {
+			dataProvider.filter(filter);
+			refreshAll();
+		}
+		
+		public void removeFilter() {
+			dataProvider.removeFilter();
+			refreshAll();
+		}
+		
+		public void filterLocal(Predicate<T> filter) {
+			dataProvider.filterLocal(filter);
+			refreshAll();
+		}
+		
+		public void removeLocalFilter() {
+			dataProvider.removeLocalFilter();
+			refreshAll();
+		}
+		
+		public DatabaseReference getReference() {
+			return dataProvider.getReference();
 		}
 	}
 }
