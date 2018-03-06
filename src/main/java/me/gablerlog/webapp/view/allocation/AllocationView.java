@@ -7,12 +7,17 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import me.gablerlog.webapp.Util;
+import me.gablerlog.webapp.component.Card;
 import me.gablerlog.webapp.db.Firebase;
 import me.gablerlog.webapp.db.FirebaseDataProvider;
 import me.gablerlog.webapp.db.RealtimeDatabase;
@@ -36,6 +41,16 @@ public class AllocationView extends CssLayout implements View {
 	private SelectOrderTab		 tabOrder;
 	
 	private Button btnSubmit;
+	
+	private Window wdParameters;
+	private Card   cdParameters;
+	
+	private VerticalLayout parametersLayout;
+	private CheckBox	   ckbAdjustRoute;
+	private CheckBox	   ckbDistributeOrders;
+	
+	private Button btnCancel;
+	private Button btnPlanRoute;
 	
 	public AllocationView(Observer observer) {
 		db = Firebase.get("gabler-log").getRealtimeDatabase();
@@ -63,12 +78,33 @@ public class AllocationView extends CssLayout implements View {
 		btnSubmit.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		addComponent(btnSubmit);
 		
+		wdParameters = new Window("Parameters");
+		cdParameters = new Card();
+		wdParameters.setContent(cdParameters);
+		
+		parametersLayout = new VerticalLayout();
+		cdParameters.setBodyContent(parametersLayout);
+		
+		ckbAdjustRoute = new CheckBox("Adjust route if necessary");
+		ckbDistributeOrders = new CheckBox("Allow distributing orders");
+		parametersLayout.addComponents(ckbAdjustRoute, ckbDistributeOrders);
+		
+		btnCancel = new Button("Cancel");
+		cdParameters.addAction(btnCancel);
+		
+		btnPlanRoute = new Button("Plan Route");
+		btnPlanRoute.setIcon(VaadinIcons.PAPERPLANE);
+		btnPlanRoute.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		cdParameters.addAction(btnPlanRoute);
+		
 		handleDataEvents();
 	}
 	
 	private void handleDataEvents() {
 		btnSubmit.addClickListener(e -> {
-			observer.submit();
+			wdParameters.setModal(true);
+			UI.getCurrent().addWindow(wdParameters);
+			wdParameters.center();
 		});
 		
 		tabCategory.cbCargoType.addSelectionListener(e -> {

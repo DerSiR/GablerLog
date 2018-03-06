@@ -10,7 +10,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import me.gablerlog.webapp.view.component.Card;
+import me.gablerlog.webapp.component.Card;
 
 @SuppressWarnings("serial")
 public class TrackingView extends VerticalLayout implements View {
