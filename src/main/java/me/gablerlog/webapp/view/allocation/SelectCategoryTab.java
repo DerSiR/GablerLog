@@ -5,7 +5,6 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.VerticalLayout;
 
 import me.gablerlog.webapp.Util;
-import me.gablerlog.webapp.db.entity.CargoType;
 import me.gablerlog.webapp.db.entity.Category;
 
 @SuppressWarnings("serial")
@@ -13,17 +12,17 @@ public class SelectCategoryTab extends VerticalLayout {
 	
 	public static final String TAB_NAME = "Category";
 	
-	ComboBox<CargoType>	cbCargoType;
-	Grid<Category>		gdCategory;
+	ComboBox<String> cbCargoType;
+	Grid<Category>	 gdCategory;
 	
 	public SelectCategoryTab() {
 		cbCargoType = new ComboBox<>("Cargo Type");
-		cbCargoType.setItemCaptionGenerator(
-				type -> Util.capitalizeFirstLetter(type.getKey()));
+		cbCargoType.setItemCaptionGenerator(Util::capitalizeFirstLetter);
 		addComponent(cbCargoType);
 		
-		gdCategory = new Grid<>();
+		gdCategory = new Grid<>(Category.class);
 		gdCategory.setCaption("Category");
+		gdCategory.setSizeFull();
 		addComponent(gdCategory);
 	}
 }

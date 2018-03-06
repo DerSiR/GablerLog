@@ -13,10 +13,9 @@ public class SelectTransporterTab extends VerticalLayout {
 	Grid<Transporter> gdTransporter;
 	
 	public SelectTransporterTab() {
-		gdTransporter = new Grid<>();
+		gdTransporter = new Grid<>(Transporter.class);
 		gdTransporter.setCaption("Transporter");
 		gdTransporter.setSizeFull();
-		
 		addComponent(gdTransporter);
 	}
 }

@@ -7,31 +7,29 @@ import me.gablerlog.webapp.db.HasKey;
 @IgnoreExtraProperties
 public class Transporter implements HasKey {
 	
-	private String key;
+	private String uuid;
 	
 	private String	 numberplate;
-	private String	 cargoType;
 	private Capacity capacity;
 	private Location location;
 	
 	public Transporter() {
 	}
 	
-	public Transporter(String numberplate, String cargoType, Capacity capacity, Location location) {
+	public Transporter(String numberplate, Capacity capacity, Location location) {
 		this.numberplate = numberplate;
-		this.cargoType = cargoType;
 		this.capacity = capacity;
 		this.location = location;
 	}
 	
 	@Override
 	public String getKey() {
-		return key;
+		return uuid;
 	}
 	
 	@Override
 	public void setKey(String key) {
-		this.key = key;
+		uuid = key;
 	}
 	
 	public String getNumberplate() {
@@ -40,14 +38,6 @@ public class Transporter implements HasKey {
 	
 	public void setNumberplate(String numberplate) {
 		this.numberplate = numberplate;
-	}
-	
-	public String getCargoType() {
-		return cargoType;
-	}
-	
-	public void setCargoType(String cargoType) {
-		this.cargoType = cargoType;
 	}
 	
 	public Capacity getCapacity() {

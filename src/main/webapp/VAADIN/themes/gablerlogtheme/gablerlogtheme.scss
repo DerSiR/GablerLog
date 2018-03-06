@@ -35,4 +35,9 @@
 	@include valo;
 	
 	// Insert your own theme rules here
+	.material-fab {
+		position: absolute;
+		bottom: 32px;
+		right: 32px;
+	}
 }
