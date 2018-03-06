@@ -16,18 +16,18 @@ public class Order implements HasKey {
 	@PropertyName("latest_delivery")
 	private long	 latestDelivery;
 	@PropertyName("expected_duration")
-	private long	 expectedDelivery;
+	private long	 expectedDuration;
 	private String	 state;
 	
 	public Order() {
 	}
 	
-	public Order(Location origin, Location destination, Capacity bulk, long latestDelivery, long expectedDelivery, String state) {
+	public Order(Location origin, Location destination, Capacity bulk, long latestDelivery, long expectedDuration, String state) {
 		this.origin = origin;
 		this.destination = destination;
 		this.bulk = bulk;
 		this.latestDelivery = latestDelivery;
-		this.expectedDelivery = expectedDelivery;
+		this.expectedDuration = expectedDuration;
 		this.state = state;
 	}
 	
@@ -74,11 +74,11 @@ public class Order implements HasKey {
 	}
 	
 	public long getExpectedDuration() {
-		return expectedDelivery;
+		return expectedDuration;
 	}
 	
-	public void setExpectedDuration(long expectedDelivery) {
-		this.expectedDelivery = expectedDelivery;
+	public void setExpectedDuration(long expectedDuration) {
+		this.expectedDuration = expectedDuration;
 	}
 	
 	public String getState() {
