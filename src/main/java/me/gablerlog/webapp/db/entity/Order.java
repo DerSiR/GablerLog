@@ -13,9 +13,7 @@ public class Order implements HasKey {
 	private Location origin;
 	private Location destination;
 	private Capacity bulk;
-	@PropertyName("latest_delivery")
 	private long	 latestDelivery;
-	@PropertyName("expected_duration")
 	private long	 expectedDuration;
 	private String	 state;
 	
@@ -65,18 +63,22 @@ public class Order implements HasKey {
 		this.bulk = bulk;
 	}
 	
+	@PropertyName("latest_delivery")
 	public long getLatestDelivery() {
 		return latestDelivery;
 	}
 	
+	@PropertyName("latest_delivery")
 	public void setLatestDelivery(long latestDelivery) {
 		this.latestDelivery = latestDelivery;
 	}
 	
+	@PropertyName("expected_duration")
 	public long getExpectedDuration() {
 		return expectedDuration;
 	}
 	
+	@PropertyName("expected_duration")
 	public void setExpectedDuration(long expectedDuration) {
 		this.expectedDuration = expectedDuration;
 	}

@@ -74,24 +74,29 @@ public class AllocationView extends CssLayout implements View {
 		tabCategory.cbCargoType.addSelectionListener(e -> {
 			if (!e.isUserOriginated()) return;
 			
-			ListDataProvider<String> cargoDataProvider = (ListDataProvider<String>) tabCategory.cbCargoType.getDataProvider();
-			FirebaseDataProvider<Transporter> transporterDataProvider = (FirebaseDataProvider<Transporter>) tabTransporter.gdTransporter.getDataProvider();
-			FirebaseDataProvider<Order> orderDataProvider = (FirebaseDataProvider<Order>) tabOrder.gdOrder.getDataProvider();
-			
 			DatabaseReference refTransporter = db.getReference("transporter");
-			FirebaseDataProvider<Transporter> newDataProvider;
+			FirebaseDataProvider<Transporter> transporterDataProvider;
+			
+			DatabaseReference refVacantOrders = db.getReference("vacant_orders");
+			FirebaseDataProvider<Order> vacantOrdersDataProvider;
 			
 			if (e.getSelectedItem().isPresent()) {
 				String cargo = e.getSelectedItem().get();
 				refTransporter = refTransporter.child(cargo);
-				newDataProvider = new FirebaseDataProvider<>(Transporter.class, refTransporter);
+				transporterDataProvider = new FirebaseDataProvider<>(Transporter.class, refTransporter);
+				
+				refVacantOrders = refVacantOrders.child(cargo);
+				vacantOrdersDataProvider = new FirebaseDataProvider<>(Order.class, refTransporter);
 				
 			} else {
 				Set<String> cargoTypes = db.getValues("cargo_types", Boolean.class).keySet();
-				newDataProvider = new FirebaseDataProvider<>(Transporter.class, refTransporter, cargoTypes);
+				transporterDataProvider = new FirebaseDataProvider<>(Transporter.class, refTransporter, cargoTypes);
+				
+				vacantOrdersDataProvider = new FirebaseDataProvider<>(Order.class, refTransporter, cargoTypes);
 			}
 			
-			tabTransporter.gdTransporter.setDataProvider(newDataProvider);
+			tabTransporter.gdTransporter.setDataProvider(transporterDataProvider);
+			tabOrder.gdOrder.setDataProvider(vacantOrdersDataProvider);
 		});
 	}
 	

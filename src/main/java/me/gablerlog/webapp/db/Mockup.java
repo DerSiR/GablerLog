@@ -12,6 +12,7 @@ import me.gablerlog.webapp.Util;
 import me.gablerlog.webapp.db.entity.Capacity;
 import me.gablerlog.webapp.db.entity.Location;
 import me.gablerlog.webapp.db.entity.Order;
+import me.gablerlog.webapp.db.entity.TrackingNumber;
 import me.gablerlog.webapp.db.entity.Transporter;
 import me.gablerlog.webapp.db.entity.User;
 
@@ -54,7 +55,7 @@ public class Mockup {
 			db.updateChildren(refRoutes.child(e).child("orders"), orders);
 			
 			orders.forEach((g, h) -> {
-				trackingNumbers.put(g, e);
+				trackingNumbers.put(g, new TrackingNumber(null, e));
 			});
 		});
 		
