@@ -6,6 +6,8 @@ import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.UI;
 
+import me.gablerlog.webapp.view.PlaceholderView;
+import me.gablerlog.webapp.view.allocation.AllocationController;
 import me.gablerlog.webapp.view.allocation.AllocationView;
 import me.gablerlog.webapp.view.navigation.NavigationView;
 import me.gablerlog.webapp.view.tracking.TrackingView;
@@ -29,7 +31,8 @@ public class GablerLogUI extends UI {
 		final Navigator navigator = new Navigator(this, display.getViewDisplay());
 		setContent(display);
 		
-		navigator.addView(AllocationView.VIEW_NAME, AllocationView.class);
+		navigator.addView("", PlaceholderView.class);
+		navigator.addView(AllocationView.VIEW_NAME, AllocationController.class);
 		navigator.addView(TrackingView.VIEW_NAME, TrackingView.class);
 		navigator.addView(NavigationView.VIEW_NAME, NavigationView.class);
 		

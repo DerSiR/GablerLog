@@ -48,12 +48,14 @@ public class ApplicationDisplay extends HorizontalLayout {
 		btnAllocation.setIcon(VaadinIcons.INBOX);
 		menuPart.addComponent(btnAllocation);
 		
-		btnTracking = new Button("Tracking", e -> UI.getCurrent().getNavigator().navigateTo(TrackingView.VIEW_NAME));
+		btnTracking = new Button("Tracking",
+				e -> UI.getCurrent().getNavigator().navigateTo(TrackingView.VIEW_NAME));
 		btnTracking.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 		btnTracking.setIcon(VaadinIcons.MAP_MARKER);
 		menuPart.addComponent(btnTracking);
 		
-		btnNavigation = new Button("Navigation", e -> UI.getCurrent().getNavigator().navigateTo(NavigationView.VIEW_NAME));
+		btnNavigation = new Button("Navigation",
+				e -> UI.getCurrent().getNavigator().navigateTo(NavigationView.VIEW_NAME));
 		btnNavigation.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 		btnNavigation.setIcon(VaadinIcons.LOCATION_ARROW_CIRCLE);
 		menuPart.addComponent(btnNavigation);
